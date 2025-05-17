@@ -1,0 +1,9 @@
+/extracted_files
+/instance
+/test data
+/rag
+/uploads
+/venv
+.env
+/__pycache__
+/rag.zip

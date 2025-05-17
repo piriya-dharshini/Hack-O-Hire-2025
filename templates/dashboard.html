@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-gray-100 p-6">
+    <nav class="bg-gray-800 p-4 rounded-lg flex justify-between items-center">
+        <!-- Other Navbar items like logo, menu, etc. -->
+        <div class="text-gray-100">Dashboard</div>
+
+        <!-- Profile Dropdown -->
+        <div class="relative">
+            <button id="profileButton" class="flex items-center text-gray-200 hover:text-gray-400 focus:outline-none">
+                <!-- Profile Icon -->
+                <i class="fas fa-user-circle text-2xl"></i>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg border border-gray-700 hidden">
+                <div class="p-3">
+                    <p class="text-gray-300">Hello, {{ session['username'] }}</p> 
+                </div>
+                <ul class="text-gray-300 text-sm">
+                    <li class="hover:bg-gray-700 px-4 py-2"><a href="{{ url_for('files_check') }}">Termsheets</a></li>
+                    <li class="hover:bg-gray-700 px-4 py-2"><a href="{{ url_for('logout') }}">Logout</a></li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h1 class="text-3xl font-bold mb-8 text-indigo-400">Validation Dashboard</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500 hover:shadow-lg transition">
+            <div class="flex justify-between">
+                <div>
+                    <p class="text-gray-400 font-medium">Total Validations</p>
+                    <p class="text-3xl font-bold mt-2">{{ total }}</p>
+                </div>
+                <div class="bg-blue-900 p-3 rounded-full">
+                    <i class="fas fa-file-alt text-blue-400"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-green-500 hover:shadow-lg transition">
+            <div class="flex justify-between">
+                <div>
+                    <p class="text-gray-400 font-medium">Completed</p>
+                    <p class="text-3xl font-bold mt-2">{{ completed }}</p>
+                </div>
+                <div class="bg-green-900 p-3 rounded-full">
+                    <i class="fas fa-check text-green-400"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-yellow-500 hover:shadow-lg transition">
+            <div class="flex justify-between">
+                <div>
+                    <p class="text-gray-400 font-medium">Pending Review</p>
+                    <p class="text-3xl font-bold mt-2">{{ pending }}</p>
+                </div>
+                <div class="bg-yellow-900 p-3 rounded-full">
+                    <i class="fas fa-clock text-yellow-400"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-red-500 hover:shadow-lg transition">
+            <div class="flex justify-between">
+                <div>
+                    <p class="text-gray-400 font-medium">Failed Validations</p>
+                    <p class="text-3xl font-bold mt-2">{{ failed }}</p>
+                </div>
+                <div class="bg-red-900 p-3 rounded-full">
+                    <i class="fas fa-exclamation-triangle text-red-400"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-200">Recent Validations</h2>
+        <div class="flex space-x-2">
+            <select class="border border-gray-700 bg-gray-800 rounded-md py-1 px-3 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option>All Statuses</option>
+                <option>Validated</option>
+                <option>Pending Review</option>
+                <option>Validation Error</option>
+            </select>
+        </div>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-gray-800 rounded-lg shadow">
+            <thead>
+                <tr class="bg-gray-700 text-left">
+                    <th class="p-4 font-semibold text-gray-300">Term Sheet</th>
+                    <th class="p-4 font-semibold text-gray-300">Date</th>
+                    <th class="p-4 font-semibold text-gray-300">Status</th>
+                    <th class="p-4 font-semibold text-gray-300">Confidence</th>
+                    <th class="p-4 font-semibold text-gray-300">Reviewer</th>
+                    <th class="p-4 font-semibold text-gray-300">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in recent_files %}
+                <tr class="border-t border-gray-700 hover:bg-gray-700 transition">
+                    <td class="p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-pdf text-red-400 mr-2"></i>
+                            {{ file.filename }}
+                        </div>
+                    </td>
+                    <td class="p-4 text-gray-400">{{ file.upload_time }}</td>
+                    <td class="p-4">
+                        {% if file.status == 'Valid' %}
+                            <span class="px-2 py-1 bg-green-700 text-green-200 rounded-full text-xs font-medium">✔ Validated</span>
+                        {% elif file.status == 'Invalid' %}
+                            <span class="px-2 py-1 bg-red-700 text-red-200 rounded-full text-xs font-medium">⚠ Validation Error</span>
+                        {% else %}
+                            <span class="px-2 py-1 bg-yellow-700 text-yellow-200 rounded-full text-xs font-medium">⏳ Pending Review</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center">
+                            <div class="w-full max-w-xs bg-gray-700 h-2 rounded mr-2">
+                                {% if file.confidence is not none %}
+                                    {% set capped_confidence = file.confidence if file.confidence <= 99 else 99 %}
+                                    <div class="h-2 rounded {% if capped_confidence > 80 %}bg-green-400{% elif capped_confidence > 50 %}bg-yellow-400{% else %}bg-red-400{% endif %}" style="width: {{ capped_confidence }}%;"></div>
+                                {% else %}
+                                    <div class="h-2 rounded bg-gray-500" style="width: 0%;"></div>
+                                {% endif %}
+                            </div>
+                            <span class="text-sm text-gray-400">
+                                {% if file.confidence is not none %}
+                                    {{ capped_confidence }}%
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center">
+                            {% if file.reviewer %}
+                                <img src="https://ui-avatars.com/api/?name={{ users.get(file.reviewer, 'AI Validated') }}&background=1e293b&color=fff&size=24" alt="Reviewer" class="rounded-full mr-2 h-6 w-6">
+                                <span>{{ users.get(file.reviewer, 'AI Validated') }}</span>
+                            {% else %}
+                                <div class="bg-blue-800 p-1 rounded-full mr-2 h-6 w-6 flex items-center justify-center">
+                                    <i class="fas fa-robot text-blue-400 text-xs"></i>
+                                </div>
+                                <span>AI Validated</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex space-x-2">
+                            <a href="{{ url_for('validation_result', filename=file.filename) }}" class="text-indigo-400 hover:text-indigo-300 transition px-3 py-1 rounded border border-indigo-400 hover:bg-indigo-900">View</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-6 flex justify-between items-center">
+        <p class="text-sm text-gray-500">Showing items from recent validations</p>
+        <div class="flex space-x-1">
+            <button class="px-3 py-1 rounded border border-gray-700 text-gray-300 text-sm hover:bg-gray-700">Previous</button>
+            <button class="px-3 py-1 rounded border border-indigo-600 bg-indigo-600 text-white text-sm">1</button>
+            <button class="px-3 py-1 rounded border border-gray-700 text-gray-300 text-sm hover:bg-gray-700">2</button>
+            <button class="px-3 py-1 rounded border border-gray-700 text-gray-300 text-sm hover:bg-gray-700">3</button>
+            <button class="px-3 py-1 rounded border border-gray-700 text-gray-300 text-sm hover:bg-gray-700">Next</button>
+        </div>
+    </div>
+    <script>
+        // Get elements for profile button and dropdown menu
+        const profileButton = document.getElementById('profileButton');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        // Function to toggle dropdown visibility
+        profileButton.addEventListener('click', function() {
+            dropdownMenu.classList.toggle('hidden');
+        });
+
+        // Close dropdown if clicked outside
+        window.addEventListener('click', function(event) {
+            if (!profileButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

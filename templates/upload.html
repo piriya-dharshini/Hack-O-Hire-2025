@@ -1,0 +1,153 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Term Sheet Validator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body class="bg-[#0d1117] text-white font-sans min-h-screen">
+
+  <nav class="flex justify-between items-center px-6 py-4 bg-[#161b22] shadow-md">
+    <h1 class="text-lg font-bold flex items-center gap-2">
+      📄 Term Sheet Validator
+    </h1>
+    <div class="space-x-4">
+      <a href="{{ url_for('dashboard' )}}" class="hover:text-purple-400">Dashboard</a>
+      <a href="#" class="hover:text-purple-400">Term Sheets</a>
+      <a href="#" class="hover:text-purple-400">Results</a>
+      <a href="#" class="hover:text-purple-400">Chat</a>
+      <p class="text-end">Welcome, {{ session['username'] }} | <a href="{{ url_for('logout') }}">Logout</a></p>
+
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto py-10 px-6">
+
+
+    <div class="bg-[#161b22] p-6 rounded-2xl border border-gray-700 shadow-lg text-center">
+      <h2 class="text-2xl font-semibold mb-2">📄 Term Sheet Validator</h2>
+      <p class="text-gray-400 mb-6">Upload your financial term sheet to extract, validate, and analyze key information.</p>
+
+      <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" class="space-y-4">
+        <label class="block border-2 border-dashed border-purple-500 rounded-lg p-6 cursor-pointer hover:bg-[#1e2530] transition">
+          <div class="flex flex-col items-center">
+            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-info"></i>
+            <span class="font-medium">Upload Term Sheet PDF</span>
+            <input type="file" name="file" class="hidden">
+            <p class="text-sm text-gray-500 mt-2">Max file size: 16MB. Only PDF files are accepted.</p>
+          </div>
+        </label>
+        <div class="text-right text-sm">
+          <a href="#" class="text-purple-400 hover:underline">📥 Download sample term sheet</a>
+        </div>
+        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition">
+          ⚙️ Process Term Sheet
+        </button>
+      </form>
+    </div>
+
+    <section class="mt-10">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold">Recent Term Sheets</h3>
+        <a href="#" class="text-sm text-purple-400 hover:underline">View All</a>
+      </div>
+      <ul class="space-y-3">
+        {% for file in files %}
+        <li class="bg-[#1c2128] p-4 rounded-xl border border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <p class="font-medium">{{ file.filename }}</p>
+            <p class="text-xs text-gray-400">Uploaded on {{ file.upload_time }}</p>
+            {% if file.reviewer %}
+              <p class="text-xs text-gray-500">🧑‍💼 Reviewer: <span class="text-white">{{ file.reviewer }}</span></p>
+            {% endif %}
+            {% if file.processing_time %}
+              <p class="text-xs text-gray-500">⏱️ Processing Time: <span class="text-white">{{ file.processing_time }}</span></p>
+            {% endif %}
+            {% if file.confidence is not none %}
+              <p class="text-xs text-gray-500">📊 Confidence: <span class="text-white">{{ file.confidence }}%</span></p>
+            {% endif %}
+          </div>
+          
+          <div class="mt-2 md:mt-0 flex items-center gap-3">
+            {% if file.status == 'Valid' %}
+              <span class="bg-green-600 text-white text-xs px-2 py-1 rounded-md">Valid</span>
+            {% else %}
+              <span class="bg-red-600 text-white text-xs px-2 py-1 rounded-md">Invalid</span>
+            {% endif %}
+            <a href="{{ url_for('extracted', filename=file.filename) }}" class="text-sm text-purple-400 hover:underline">View Extracted</a>
+            <a href="{{ url_for('validation_result', filename=file.filename) }}" class="btn btn-sm btn-success">Show Validated Result</a>
+            <a href="{{ url_for('chat_with', filename=file.filename) }}" class="btn btn-success btn-sm">Chat with PDF</a>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    <section class="mt-12">
+      <div class="bg-[#161b22] p-6 rounded-2xl border border-gray-700 shadow-lg">
+        <h4 class="text-xl font-semibold mb-2">📘 Supported Term Sheet Elements</h4>
+        <p class="text-gray-400 mb-6">Our AI can extract and validate the following key financial terms:</p>
+    
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-center gap-2"><span class="text-info">📅</span> Issue Date</li>
+            <li class="flex items-center gap-2"><span class="text-info">✅</span> Settlement Date</li>
+            <li class="flex items-center gap-2"><span class="text-primary">🏷️</span> Series</li>
+            <li class="flex items-center gap-2"><span class="text-yellow-400">🔖</span> Tranche</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">💲</span> Issue Currency</li>
+          </ul>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-center gap-2"><span class="text-green-400">💵</span> Settlement Currency</li>
+            <li class="flex items-center gap-2"><span class="text-gray-400">📄</span> Securities</li>
+            <li class="flex items-center gap-2"><span class="text-yellow-400">🗒️</span> Notes</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">💰</span> Specified Denomination</li>
+            <li class="flex items-center gap-2"><span class="text-blue-400">🔁</span> Min. Tradable Amount</li>
+          </ul>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-center gap-2"><span class="text-red-400">🎖️</span> Redeemable Certificates</li>
+            <li class="flex items-center gap-2"><span class="text-blue-300">🧮</span> Calculation Amount</li>
+            <li class="flex items-center gap-2"><span class="text-yellow-300">📈</span> Issue Price</li>
+            <li class="flex items-center gap-2"><span class="text-purple-300">🛡️</span> Type of Security</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">📎</span> Relevant Annexes</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+  <script>
+    const fileInput = document.querySelector('input[type="file"]');
+    const label = fileInput.closest('label');
+    const form = fileInput.closest('form');
+  
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (file) {
+        const filePreview = document.createElement('div');
+        filePreview.className = 'bg-[#1e2530] p-4 rounded-lg text-left mt-4 border border-gray-600';
+        filePreview.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm font-medium">📄 ${file.name}</p>
+              <p class="text-xs text-gray-400">${(file.size / 1024).toFixed(2)} KB</p>
+            </div>
+            <button id="remove-file" class="text-red-400 hover:text-red-600 text-sm">✖ Remove</button>
+          </div>
+        `;
+  
+        label.style.display = 'none';
+        form.insertBefore(filePreview, form.querySelector('button[type="submit"]'));
+  
+        document.getElementById('remove-file').addEventListener('click', () => {
+          fileInput.value = '';
+          filePreview.remove();
+          label.style.display = '';
+        });
+      }
+    });
+  </script>
+  
+
+</body>
+</html>
