@@ -49,7 +49,7 @@ def perform_ocr(file_path):
         }
 
         # Use your API key
-        api_key = "AIzaSyCxU9QA0VJE5WhDuiB8KVLrSi_JopoEWr0"
+        api_key = "your_api_key"
         
         # Make the POST request
         response = requests.post(
