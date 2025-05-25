@@ -16,16 +16,4 @@ A Flask-based web application for uploading, extracting, anonymizing, and valida
 
 ---
 
-## 🛠️ Tech Stack
-
-- Python, Flask
-- MongoDB (via `pymongo`)
-- OpenAI GPT-4o
-- Presidio (for PII anonymization)
-- Pandas, Requests, Logging
-- HTML/CSS (Jinja2 templates)
-
----
-
-## 📁 Folder Structure
 
