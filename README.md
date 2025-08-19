@@ -1,6 +1,6 @@
 # Barclays Term Sheet Validation Platform
 
-A Flask-based web application for uploading, extracting, anonymizing, and validating term sheet documents. The platform supports multiple document formats, user authentication, dashboard visualization, OpenAI integration for compliance checking, and an interactive chat assistant.
+A Platform for uploading, extracting, anonymizing, and validating term sheet documents. The platform supports multiple document formats, user authentication, dashboard visualization, OpenAI integration for compliance checking, and an interactive chat assistant.
 
 ---
 
