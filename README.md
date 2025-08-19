@@ -6,14 +6,17 @@ A Flask-based web application for uploading, extracting, anonymizing, and valida
 
 ## 🚀 Features
 
-- 🔒 **User Authentication** (Register/Login/Logout)
-- 📂 **Multi-format File Upload** (PDF, Word, Excel, Images, Email)
-- 🧠 **Text Extraction & Anonymization** using `presidio`
-- ✅ **Validation Against Recap Excel Sheet**
-- 📊 **User Dashboard** with file status insights
-- 💬 **Chat with Term Sheet** using OpenAI GPT-4o
 - 🗃️ **MongoDB Integration** for storing files, users, and results
+- ✅ **Validation Against Recap Excel Sheet**  
+- 🧠 **Text Extraction & Anonymization** using `presidio`
 
+Some Screenshots:
+- 🔒 **User Authentication** (Register/Login/Logout)
+- <img width="1919" height="932" alt="image" src="https://github.com/user-attachments/assets/c7671ab8-1156-4591-a8fd-0876394ad69c" />
+- 📊 **User Dashboard** with file status insights
+- <img width="1919" height="817" alt="image" src="https://github.com/user-attachments/assets/5e13c4bb-07d8-48cb-bf54-80d42c77aa85" />
+- 💬 **Chat with Term Sheet** using OpenAI GPT-4o
+- <img width="1914" height="819" alt="image" src="https://github.com/user-attachments/assets/b71f85c6-18ca-45c0-88e1-4e62957d88cc" />
 ---
 
 
